@@ -1,0 +1,22 @@
+[*]
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+end_of_line = lf
+charset = utf-8
+
+[*.py]
+max_line_length = 88
+
+[*.json]
+indent_size = 4
+
+[/scripts/**]
+charset = unset
+end_of_line = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset
+indent_style = unset
+indent_size = unset
+max_line_length = unset
