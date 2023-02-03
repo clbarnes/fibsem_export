@@ -1,0 +1,73 @@
+{
+    "srcDatDir": "/net/fibserver1/raw/Leonardo",
+    "tgtCsvDir": "/net/fibserver1/raw/Leonardo_registered_new/csvs",
+    "firstFile": "Merlin-FIBdeSEMAna_22-12-07_020549_0-0-0.dat",
+    "originalDimensions": {
+        "width": 11667,
+        "height": 11250,
+        "nChannels": 2
+    },
+    "viewAlignment": true,
+    "n5": {
+        "exportN5": false,
+        "tgtN5Container": "/net/fibserver1/raw/Leonardo_registered_new/n5",
+        "tgtN5Group": "Leonardo",
+        "blockSize": [256, 256, 64],
+        "resolution": [8.0, 8.0, 30.0],
+        "resolutionUnit": "nm"
+    },
+    "metadata": {
+        "codename": "leonardo",
+        "attribution": "",
+        "species": "",
+        "age": "",
+        "regionOfInterest": "",
+        "treatment": ""
+    },
+    "properties": {
+        "crop_roi": {
+            "x": 1296,
+            "y": 2448,
+            "width": 17811,
+            "height": 14616
+        },
+        "pixelType": "uint8",
+        "n_threads": 60,
+        "preload": 0,
+        "invert": true,
+        "CLAHE_params": {
+            "blockRadius": 200,
+            "nBins": 256,
+            "slope": 3.0
+        },
+        "use_SIFT": false,
+        "precompute": true,
+        "SIFT_validateByFileExists": true,
+        "bad_sections": {}
+    },
+    "paramsBlockmatching": {
+        "scale": 0.25,
+        "meshResolution": 20,
+        "minR": 0.1,
+        "rod": 0.9,
+        "maxCurvature": 1000.0,
+        "searchRadius": 25,
+        "blockRadius": 200,
+        "max_id": 50,
+        "max_sd": 1.2
+    },
+    "paramsSIFT": {
+        "fdSize": 8,
+        "fdBins": 8,
+        "maxOctaveSize": 2048,
+        "steps": 3,
+        "initialSigma": 1.6
+    },
+    "paramsTileConfiguration": {
+        "n_adjacent": 3,
+        "maxAllowedError": 0,
+        "maxPlateauWidth": 200,
+        "maxIterations": 1000,
+        "damp": 1.0
+    }
+}
