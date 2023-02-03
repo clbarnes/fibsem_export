@@ -37,7 +37,7 @@ from mpicbg.imagefeatures import FloatArray2DSIFT
 from ij import IJ
 from ij.gui import Roi
 
-CONFIG_NAME = "leonardo.json"
+CONFIG_NAME = "config.json"
 
 
 timestamp = dt.datetime.utcnow()
