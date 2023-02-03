@@ -137,12 +137,15 @@ expected_size = 1024 + original_dimensions[0] * original_dimensions[1] * config[
 
 filepaths2 = []
 for idx, path in enumerate(filepaths):
+
   if os.stat(path).st_size < expected_size:
     print os.stat(path).st_size, "vs expected:", expected_size
     print "Corrupted file path:", path
-    properties["bad_sections"][idx] = -1
-  else:
-    filepaths2.append(path)
+    properties["bad_sections"].setdefault(idx, -1)
+
+  filepaths2.append(path)
+#   else:
+#     filepaths2.append(path)
 
 print "Found ", len(filepaths2) - len(filepaths), "corrupted images"
 filepaths = filepaths2
@@ -301,6 +304,10 @@ if config["exportN5"]:
   }
   update_attributes(group_metadata, exportDir, group_name)
   update_attributes(
-      {"exportConfig": config, "exportTimestampUTC": timestamp.isoformat()},
+      {
+          "exportConfig": config,
+          "exportTimestampUTC": timestamp.isoformat(),
+          "badSections": {str(k): v for k, v in properties["bad_sections"].iteritems()}
+      },
       exportDir, ds_name
   )
