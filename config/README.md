@@ -8,7 +8,7 @@ They are in [JSON format](https://en.wikipedia.org/wiki/JSON#Syntax).
 
 - `firstFile`: Skip all images before this one (relative to `srcDatDir`); `null` to use first available image.
 - `originalDimensions`: Width and height of the images in the .dat file.
-- `expectedFileNBytes`: 1024 bytes of header, image data (e.g. 2x16bit channels of size `width*height`), plus binary footer of indeterminate size.
+- `expectedFileNBytes`: 1024 bytes of header, image data (e.g. 2x16bit channels of size `width*height`), plus possibly some padding 0s, plus a binary footer of indeterminate size.
 - `viewAlignment`: Whether to show the virtual stack of the aligned sections (switch to `false` when alignment is good enough). Must be run with `true` at least once (with `properties.precompute = true`) to generate point match CSVs before N5 can be exported.
 
 ### `n5`
