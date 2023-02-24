@@ -24,7 +24,7 @@ git checkout -b my_export_name
 Then, modify the `config/config.json` file, with help from `config/README.md` (not all fields are documented, as some are fairly self-explanatory).
 If you *need* multiple configurations in one place, you can copy the JSON file and change the name in `fibsem_registration.py`, but I recommend against it.
 
-Use FIJI's python script runner to run `fibsem_registration.py`.
+Use [FIJI](https://imagej.net/software/fiji/)'s python script runner to run `fibsem_registration.py`.
 Modify the JSON configuration file if any parameters need tweaking.
 
 ### Finalising
@@ -39,6 +39,25 @@ Change the config file's `"viewAlignment"` to `false` and `"n5"."exportN5"` to `
 The configuration will be stored in the N5 so that anyone can see the parameters used for it.
 
 If you have made changes to the actual script and think they would be beneficial to others, raise a [pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) to add it to the mainline repository.
+
+### Scale pyramid
+
+The recommended tool is [saalfeldlab/n5-spark](https://github.com/saalfeldlab/n5-spark).
+Install according to the instructions there, using the "local machine" configuration.
+
+The easiest way to control every step of the downsampling (e.g. changing the factors so that voxels become isotropic) is to write a script with successive calls to `n5-downsample.py` for each level.
+
+```sh
+#!/bin/bash
+
+# run to convert s0 to s1, then again to convert s1 to s2 etc
+n5-spark/startup-scripts/n5-downsample.py -n $tgtN5Container -i $tgtN5Group/s$CURRENTSCALE -o $tgtN5Group/s$NEXTSCALE -f $DOWNSAMPLING
+```
+
+Then edit the `$tgtN5Container/$tgtN5Group/attributes.json`.
+By default, it should have an array field `"downsamplingFactors": [[1, 1, 1]]`;
+for each scale added, add an extra sub-array which relates the downsampling of each scale to the original.
+For example, if you have dowsampled s0 by 2,2,2 to get s1, and s1 by 2,2,2 to get s2, the field should looke like `"downsamplingFactors": [[1,1,1], [2,2,2], [4,4,4]]`.
 
 ## Updating Albert's scripts
 
