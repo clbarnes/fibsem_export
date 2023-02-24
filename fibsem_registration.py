@@ -175,7 +175,6 @@ paramsSIFT.fdBins = pSIFT["fdBins"]
 paramsSIFT.maxOctaveSize = pSIFT.get("maxOctaveSize") or int(max(2048, dimensions[0] * params["scale"]))
 # paramsSIFT.maxOctaveSize = 2048  # int(max(2048, dimensions[0] * params["scale"]))
 paramsSIFT.steps = pSIFT["steps"]
-paramsSIFT.steps = 3
 paramsSIFT.minOctaveSize = int(paramsSIFT.maxOctaveSize / pow(2, paramsSIFT.steps))
 paramsSIFT.initialSigma = pSIFT["initialSigma"]
 # paramsSIFT.initialSigma = 1.6 # default 1.6
