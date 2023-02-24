@@ -20,7 +20,6 @@
 
 import os, sys
 import json
-from glob import glob
 import datetime as dt
 
 here = os.path.dirname(os.path.abspath(__file__))

@@ -25,7 +25,7 @@ Then, modify the `config/config.json` file, with help from `config/README.md` (n
 If you *need* multiple configurations in one place, you can copy the JSON file and change the name in `fibsem_registration.py`, but I recommend against it.
 
 Use FIJI's python script runner to run `fibsem_registration.py`.
-Modify the configuration file if any parameters need tweaking.
+Modify the JSON configuration file if any parameters need tweaking.
 
 ### Finalising
 
