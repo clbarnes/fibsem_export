@@ -294,18 +294,22 @@ if config["exportN5"]:
                n5_threads=properties["n_threads"],
                block_size=config["blockSize"]) # ~4 MB per block
 
-  group_metadata = {
+  resolution = {
       "resolution": config["n5"]["resolution"],
-      "units": [config["n5"]["resolutionUnit"]] * 3,
+      "units": [config["n5"]["resolutionUnit"]] * 3
+  }
+  group_metadata = {
       "downsamplingFactors": [[1, 1, 1]],
-      "metadata": config["metadata"]
+      "metadata": config["metadata"],
+      **resolution
   }
   update_attributes(group_metadata, exportDir, group_name)
   update_attributes(
       {
           "exportConfig": config,
           "exportTimestampUTC": timestamp.isoformat(),
-          "badSections": {str(k): v for k, v in properties["bad_sections"].iteritems()}
+          "badSections": {str(k): v for k, v in properties["bad_sections"].iteritems()},
+          **resolution
       },
       exportDir, ds_name
   )

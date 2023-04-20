@@ -4,6 +4,8 @@ Configuration for particular exports are found here.
 
 They are in [JSON format](https://en.wikipedia.org/wiki/JSON#Syntax).
 
+This documentation was initially derived from comments in the underlying code.
+
 ## Configuration
 
 - `firstFile`: Skip all images before this one (relative to `srcDatDir`); `null` to use first available image.
