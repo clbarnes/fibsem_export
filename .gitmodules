@@ -1,6 +1,3 @@
-[submodule "acardona_scripts"]
-	path = acardona_scripts
-	url = https://github.com/acardona/scripts.git
 [submodule "utils/acardona_scripts"]
 	path = utils/acardona_scripts
 	url = https://github.com/acardona/scripts.git
