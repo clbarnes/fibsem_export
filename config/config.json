@@ -7,13 +7,19 @@
         "height": 11250,
         "nChannels": 2
     },
-    "viewAlignment": true,
     "n5": {
-        "exportN5": false,
         "tgtN5Container": "/net/fibserver1/raw/Leonardo_registered_new/leonardo.n5",
         "tgtN5Group": "v2/raw",
-        "blockSize": [256, 256, 64],
-        "resolution": [8.0, 8.0, 30.0],
+        "blockSize": [
+            256,
+            256,
+            64
+        ],
+        "resolution": [
+            8.0,
+            8.0,
+            30.0
+        ],
         "resolutionUnit": "nm"
     },
     "metadata": {

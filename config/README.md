@@ -8,7 +8,7 @@ This documentation was initially derived from comments in the underlying code.
 
 ## Configuration
 
-- `firstFile`: Skip all images before this one (relative to `srcDatDir`); `null` to use first available image.
+- `firstFile`: String representing file path, relative to `srcDatDir`. Skip all images lexicographically before this one; `null` to use first available image.
 - `originalDimensions`: Width and height of the images in the .dat file.
 - `expectedFileNBytes`: 1024 bytes of header, image data (e.g. 2x16bit channels of size `width*height`), plus possibly some padding 0s, plus a binary footer of indeterminate size.
 - `viewAlignment`: Whether to show the virtual stack of the aligned sections (switch to `false` when alignment is good enough). Must be run with `true` at least once (with `properties.precompute = true`) to generate point match CSVs before N5 can be exported.
@@ -17,7 +17,7 @@ This documentation was initially derived from comments in the underlying code.
 
 - `exportN5`: Whether to export the aligned N5 (switch to `true` when alignment is good enough).
 - `tgtN5Container`: Should be a directory ending with `.n5`
-- `tgtN5Group`: Name of the output group within `tgtN5Container` which will become a scale pyramid (may include intervening groups). The dataset will be the base of the pyramid: `${tgtN5Group}/s0`.
+- `tgtN5Group`: Name of the output group within `tgtN5Container` which will become a scale pyramid (may include intervening groups). The output dataset will be the base of the pyramid: `${tgtN5Group}/s0`.
 - `blockSize`: In pixels; preferably 2-4 MB per block, isotropic in nm space, and ideally power-of-two in each dimension.
 - `resolution`: In real space, the size of each voxel.
 - `resolutionUnit`: SI-prefix + `m` (e.g. `"nm"`).
@@ -31,9 +31,9 @@ Fill in as much as you possibly can.
 
 ### `properties`
 
-- `crop_roi`: Crop to apply to every image immediately upon loading; use `null` to disable. Only applies to viewing, not to N5 export.
+- `crop_roi`: Object like `{"x": integer, "y": integer, "width": integer, "height": integer}` or `null` to disable. Crop to apply to every image immediately upon loading. Only applies to viewing, not to N5 export.
 - `pixelType`: `"uint8"` for unsigned 8-bit integer.
-- `CLAHE_params`: For viewAligned; use `null` to disable.
+- `CLAHE_params`: Object like `{"blockRadius": integer, "nBins": integer, "slope": float}` or `null` to disable. For viewAligned.
 - `use_SIFT`: force SIFT instead of blockmatching for all sections.
 - `precompute`: `true` to generate feature/ pointmatch CSVs, `false` when they already exist.
 - `preload`: Images to preload ahead of time in the registered virtual stack that opens.
@@ -58,7 +58,7 @@ Parameters for SIFT features, in case blockmatching fails due to large translati
 
 - `fdSize`: Default is 4.
 - `fdBins`: Default is 8.
-- `maxOctaveSize`: If `null`, guessed from dimensions and scale.
+- `maxOctaveSize`: Integer. If `null`, guessed from dimensions and scale.
 - `initialSigma`: Default is 1.6.
 
 ### `paramsTileConfiguration`

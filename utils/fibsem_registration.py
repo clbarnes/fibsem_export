@@ -23,7 +23,7 @@ import json
 import datetime as dt
 
 here = os.path.dirname(os.path.abspath(__file__))
-scripts_dir = os.path.join(here, "scripts")
+scripts_dir = os.path.join(here, "acardona_scripts")
 sys.path.append(os.path.join(scripts_dir, "python/imagej/IsoView-GCaMP/"))
 
 from lib.io import findFilePaths, readFIBSEMdat
@@ -37,9 +37,10 @@ from ij import IJ
 from ij.gui import Roi
 
 CONFIG_NAME = "config.json"
+TIMESTAMP = dt.datetime.utcnow()
 
-
-timestamp = dt.datetime.utcnow()
+project_dir = os.path.dirname(here)
+config_dir = os.path.join(project_dir, "config")
 
 
 def read_json(path):
@@ -55,11 +56,11 @@ def write_json(object, path):
     f.close()
 
 
-config = read_json(os.path.join(here, "config", CONFIG_NAME))
+CONFIG = read_json(os.path.join(config_dir, CONFIG_NAME))
 
-srcDir = config["srcDatDir"]
-csvDir = config["tgtCsvDir"]
-exportDir = config["tgtN5Container"]
+srcDir = CONFIG["srcDatDir"]
+csvDir = CONFIG["tgtCsvDir"]
+exportDir = CONFIG["tgtN5Container"]
 
 # srcDir = "/net/fibserver1/raw/Leonardo/" # MUST have an ending slash
 # tgtDir = "/net/fibserver1/raw/Leonardo_registered_new"
@@ -69,7 +70,7 @@ exportDir = config["tgtN5Container"]
 # Recursive search into srcDir for files ending in InLens_raw.tif
 filepaths = findFilePaths(srcDir, ".dat")
 
-firstFile = config.get("firstFile")
+firstFile = CONFIG.get("firstFile")
 if firstFile:
     # Remove mouth hooks from processed volume
     startIndex = filepaths.index(os.path.join(firstFile, srcDir))
@@ -78,12 +79,12 @@ if firstFile:
 # Image properties: ASSUMES all images have the same properties
 # (While the script an cope with images of different dimensions for registration,
 # the visualization and export would need minor adjustments to cope.)
-origD = config["originalDimensions"]
+origD = CONFIG["originalDimensions"]
 dimensions = [origD["width"], origD["height"]]
 # dimensions = [11667, 11250]
 original_dimensions = dimensions
 
-properties = config["properties"].copy()
+properties = CONFIG["properties"].copy()
 properties["img_dimensions"] = dimensions
 crop = properties["crop_roi"]
 properties["crop_roi"] = Roi(crop["x"], crop["y"], crop["width"], crop["height"])
@@ -131,7 +132,7 @@ if roi:
 # expected_size = 1024 + original_dimensions[0] * original_dimensions[1] * 2 * 2
 # BUT NO: there is a trailer, in addition to a header, of unknow size
 #expected_size = 1053794601
-expected_size = 1024 + original_dimensions[0] * original_dimensions[1] * config["originalDimensions"]["nChannels"] * 2
+expected_size = 1024 + original_dimensions[0] * original_dimensions[1] * CONFIG["originalDimensions"]["nChannels"] * 2
 # expected_size = 525020417
 
 filepaths2 = []
@@ -162,9 +163,9 @@ filepaths = filepaths2
 #  'max_id': 50, # maximum distance between features in image space # for SIFT pointmatches
 #  'max_sd': 1.2, # maximum difference in size between features # for SIFT pointmatches
 # }
-params = config["paramsBlockmatching"]
+params = CONFIG["paramsBlockmatching"]
 
-pSIFT = config["paramsSIFT"]
+pSIFT = CONFIG["paramsSIFT"]
 
 # Parameters for SIFT features, in case blockmatching fails due to large translation or image dimension mistmatch
 paramsSIFT = FloatArray2DSIFT.Param()
@@ -179,7 +180,7 @@ paramsSIFT.minOctaveSize = int(paramsSIFT.maxOctaveSize / pow(2, paramsSIFT.step
 paramsSIFT.initialSigma = pSIFT["initialSigma"]
 # paramsSIFT.initialSigma = 1.6 # default 1.6
 
-paramsTileConfiguration = config["paramsTileConfiguration"]
+paramsTileConfiguration = CONFIG["paramsTileConfiguration"]
 # Parameters for computing the transformation models
 # paramsTileConfiguration = {
 #   "n_adjacent": 3, # minimum of 1; Number of adjacent sections to pair up
@@ -233,15 +234,6 @@ else:
   syncPrint("Using IJ.loadImage to read image files.")
 
 
-# Triggers the whole alignment and ends by showing a virtual stack of the aligned sections.
-# Crashware: can be restarted anytime, will resume from where it left off.
-if config["viewAlignment"]:
-  imp = viewAligned(filepaths, csvDir, params, paramsSIFT, paramsTileConfiguration, properties,
-                    FinalInterval([x0, y0], [x1, y1]))
-  # Open a sortable table with 3 columns: the image filepath indices and the number of pointmatches
-  qualityControl(filepaths, csvDir, params, properties, paramsTileConfiguration, imp=imp)
-
-
 def update_attributes(attrs, container_root, object_name=None):
     reserved = {"dimensions", "dataType", "blockSize", "compression", "n5"}
     safe_attrs = {k: v for k, v in attrs.iteritems() if k not in reserved}
@@ -260,56 +252,3 @@ def update_attributes(attrs, container_root, object_name=None):
         d = dict()
     d.update(safe_attrs)
     write_json(d, attr_path)
-
-
-# When the alignment is good enough, then export as N5 by swapping "False" for "True" below:
-
-
-if config["exportN5"]:
-
-  # Ignore ROI: export the whole volume
-  dimensions = original_dimensions
-  properties["crop_roi"] = None
-
-  # Write the whole volume in N5 format
-#   name = properties["name"] # srcDir.split('/')[-2]
-  group_name = config["n5"]["tgtN5Group"]
-  ds_name = group_name.rstrip("/") + "/" + "s0"
-  exportDir = config["n5"]["tgtN5Container"]
-  # Export ROI:
-  # x=864 y=264 width=15312 h=17424
-  interval = FinalInterval([0, 0], [dimensions[0] -1, dimensions[1] -1])
-
-
-  export8bitN5(filepaths,
-               loader,
-               dimensions,
-               loadMatrices("matrices", csvDir), # expects matrices.csv file to exist already
-               ds_name,
-               exportDir,
-               interval,
-               gzip_compression=0, # Don't use compression: less than 5% gain, at considerable processing cost
-               invert=True,
-               CLAHE_params=properties["CLAHE_params"],
-               n5_threads=properties["n_threads"],
-               block_size=config["blockSize"]) # ~4 MB per block
-
-  resolution = {
-      "resolution": config["n5"]["resolution"],
-      "units": [config["n5"]["resolutionUnit"]] * 3
-  }
-  group_metadata = {
-      "downsamplingFactors": [[1, 1, 1]],
-      "metadata": config["metadata"],
-      **resolution
-  }
-  update_attributes(group_metadata, exportDir, group_name)
-  update_attributes(
-      {
-          "exportConfig": config,
-          "exportTimestampUTC": timestamp.isoformat(),
-          "badSections": {str(k): v for k, v in properties["bad_sections"].iteritems()},
-          **resolution
-      },
-      exportDir, ds_name
-  )
