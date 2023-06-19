@@ -234,15 +234,6 @@ else:
   syncPrint("Using IJ.loadImage to read image files.")
 
 
-# Triggers the whole alignment and ends by showing a virtual stack of the aligned sections.
-# Crashware: can be restarted anytime, will resume from where it left off.
-if CONFIG["viewAlignment"]:
-  imp = viewAligned(filepaths, csvDir, params, paramsSIFT, paramsTileConfiguration, properties,
-                    FinalInterval([x0, y0], [x1, y1]))
-  # Open a sortable table with 3 columns: the image filepath indices and the number of pointmatches
-  qualityControl(filepaths, csvDir, params, properties, paramsTileConfiguration, imp=imp)
-
-
 def update_attributes(attrs, container_root, object_name=None):
     reserved = {"dimensions", "dataType", "blockSize", "compression", "n5"}
     safe_attrs = {k: v for k, v in attrs.iteritems() if k not in reserved}
@@ -261,56 +252,3 @@ def update_attributes(attrs, container_root, object_name=None):
         d = dict()
     d.update(safe_attrs)
     write_json(d, attr_path)
-
-
-# When the alignment is good enough, then export as N5 by swapping "False" for "True" below:
-
-
-if CONFIG["exportN5"]:
-
-  # Ignore ROI: export the whole volume
-  dimensions = original_dimensions
-  properties["crop_roi"] = None
-
-  # Write the whole volume in N5 format
-#   name = properties["name"] # srcDir.split('/')[-2]
-  group_name = CONFIG["n5"]["tgtN5Group"]
-  ds_name = group_name.rstrip("/") + "/" + "s0"
-  exportDir = CONFIG["n5"]["tgtN5Container"]
-  # Export ROI:
-  # x=864 y=264 width=15312 h=17424
-  interval = FinalInterval([0, 0], [dimensions[0] -1, dimensions[1] -1])
-
-
-  export8bitN5(filepaths,
-               loader,
-               dimensions,
-               loadMatrices("matrices", csvDir), # expects matrices.csv file to exist already
-               ds_name,
-               exportDir,
-               interval,
-               gzip_compression=0, # Don't use compression: less than 5% gain, at considerable processing cost
-               invert=True,
-               CLAHE_params=properties["CLAHE_params"],
-               n5_threads=properties["n_threads"],
-               block_size=CONFIG["blockSize"]) # ~4 MB per block
-
-  resolution = {
-      "resolution": CONFIG["n5"]["resolution"],
-      "units": [CONFIG["n5"]["resolutionUnit"]] * 3
-  }
-  group_metadata = {
-      "downsamplingFactors": [[1, 1, 1]],
-      "metadata": CONFIG["metadata"],
-      **resolution
-  }
-  update_attributes(group_metadata, exportDir, group_name)
-  update_attributes(
-      {
-          "exportConfig": CONFIG,
-          "exportTimestampUTC": TIMESTAMP.isoformat(),
-          "badSections": {str(k): v for k, v in properties["bad_sections"].iteritems()},
-          **resolution
-      },
-      exportDir, ds_name
-  )

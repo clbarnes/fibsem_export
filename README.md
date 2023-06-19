@@ -26,11 +26,8 @@ If you *need* multiple configurations in one place, you can copy the JSON file a
 
 ### First use
 
-Ensure that the JSON configuration file's `"viewAlignment"` is set to `true` the first time you run it.
-This is necessary to produce some intermediate artifacts the export will later rely on.
-You will probably also want to ensure that `"n5"."exportN5` is `false` for this run, even if you are just re-running a previously successful configuration.
-
-Use [FIJI](https://imagej.net/software/fiji/)'s python script runner to run `fibsem_registration.py`.
+Use [FIJI](https://imagej.net/software/fiji/)'s python script runner to run `view_alignment.py`.
+This must be run at least once, even if you are certain of the config, in order to generate some intermediate data (point match CSVs).
 
 Modify the config file if any parameters need tweaking.
 
@@ -39,9 +36,9 @@ Modify the config file if any parameters need tweaking.
 Once you're happy with the alignment:
 
 [Stage (add)](https://www.w3schools.com/git/git_staging_environment.asp?remote=github) and [commit](https://www.w3schools.com/git/git_commit.asp?remote=github) your changes to git so that you have a forever-accessible snapshot of the state of the config and code.
-You might also want to tag and push it to a fork, but this isn't a git tutorial ([this is](https://missing.csail.mit.edu/2020/version-control/)).
+You might also want to tag and push it to a fork, but this isn't a git tutorial.
 
-Change the config file's `"viewAlignment"` to `false` and `"n5"."exportN5"` to `true`, and run the script again to export the volume as N5.
+Run `export_n5.py` to export the N5 with the configured paths.
 
 The configuration will be stored in the N5 so that anyone can see the parameters used for it.
 
