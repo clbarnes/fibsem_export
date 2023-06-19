@@ -51,7 +51,7 @@ Install according to the instructions there, using the "local machine" configura
 
 The easiest way to control every step of the downsampling (e.g. changing the factors so that voxels become isotropic) is to write a script with successive calls to `n5-downsample.py` for each level.
 
-This repo also contains a python script (`scripts/python/add_downsampling.py`) to update the multiscale group's metadata with the given downsampling factors.
+This repo also contains a python script (`extra/python/add_downsampling.py`) to update the multiscale group's metadata with the given downsampling factors.
 Run this after the n5-spark script has created the new dataset.
 
 ```sh
@@ -73,7 +73,7 @@ DOWNSAMPLING='2,2,2'
 $N5_SPARK_PATH/startup-scripts/n5-downsample.py -n $tgtN5Container -i $tgtN5Group/s$CURRENTSCALE -o $tgtN5Group/s$NEXTSCALE -f $DOWNSAMPLING
 
 # update metadata
-python3 $FIBSEM_EXPORT_PATH/scripts/python/add_downsampling.py $tgtN5Container $tgtN5Group $NEXTSCALE $DOWNSAMPLING
+python3 $FIBSEM_EXPORT_PATH/extra/python/add_downsampling.py $tgtN5Container $tgtN5Group $NEXTSCALE $DOWNSAMPLING
 
 # next iteration
 CURRENTSCALE=$NEXTSCALE
