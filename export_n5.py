@@ -19,8 +19,8 @@ from fibsem_registration import (
     timestamp,
 )
 
-scripts_dir = os.path.join(here, "utils", "acardona_scripts")
-sys.path.append(os.path.join(scripts_dir, "python/imagej/IsoView-GCaMP/"))
+if not os.path.isdir(csvDir) or not os.listdir(csvDir):
+    raise RuntimeError("CSV dir is nonexistent or empty. Run view_alignment.py first.")
 
 # Ignore ROI: export the whole volume
 dimensions = original_dimensions
