@@ -12,7 +12,7 @@ max_line_length = 88
 [*.json]
 indent_size = 4
 
-[/scripts/**]
+[/utils/acardona_scripts/**]
 charset = unset
 end_of_line = unset
 insert_final_newline = unset
